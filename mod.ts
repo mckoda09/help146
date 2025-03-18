@@ -16,6 +16,11 @@ bot.chatType("private").command("start", async (c) => {
 });
 
 bot.chatType("private").on("msg:text", async (c) => {
+  if (c.msg.text.length > 300)
+    return await c.reply(
+      "Слишком длинный запрос. Попробуйте описать проблему проще."
+    );
+
   await c.replyWithChatAction("typing");
 
   const result = await mistral.agents.complete({
@@ -27,6 +32,7 @@ bot.chatType("private").on("msg:text", async (c) => {
         content: c.msg.text,
       },
     ],
+    maxTokens: 500,
   });
 
   if (result.choices) {
