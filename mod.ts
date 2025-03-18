@@ -22,7 +22,6 @@ bot.chatType("private").on("msg:text", async (c) => {
     );
 
   await c.replyWithChatAction("typing");
-
   const result = await mistral.agents.complete({
     stream: false,
     agentId: Deno.env.get("MISTRAL_AGENT_ID")!,
@@ -32,7 +31,7 @@ bot.chatType("private").on("msg:text", async (c) => {
         content: c.msg.text,
       },
     ],
-    maxTokens: 500,
+    maxTokens: 300,
   });
 
   if (result.choices) {
