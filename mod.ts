@@ -6,7 +6,7 @@ const mistral = new Mistral({
   apiKey: Deno.env.get("MISTRAL_KEY"),
 });
 
-const reportGroupId = -2520608512;
+const reportGroupId = 2520608512;
 
 bot.chatType("private").command("start", async (c) => {
   await c.reply("Привет 👋");
