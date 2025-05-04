@@ -6,20 +6,21 @@ const mistral = new Mistral({
   apiKey: Deno.env.get("MISTRAL_KEY"),
 });
 
-const reportGroupId = -4793860929;
+const reportGroupId = -2520608512;
 
 bot.chatType("private").command("start", async (c) => {
   await c.reply("Привет 👋");
   await c.reply(
-    "Я помогу узнать любую информацию о 146 школе.\nСлушаю твои вопросы."
+    "Я помогу узнать любую информацию о 146 школе.\nСлушаю твои вопросы.",
   );
 });
 
 bot.chatType("private").on("msg:text", async (c) => {
-  if (c.msg.text.length > 300)
+  if (c.msg.text.length > 300) {
     return await c.reply(
-      "Слишком длинный запрос. Попробуйте описать проблему проще."
+      "Слишком длинный запрос. Попробуйте описать проблему проще.",
     );
+  }
 
   await c.replyWithChatAction("typing");
   const result = await mistral.agents.complete({
@@ -49,7 +50,7 @@ bot.chatType("private").on("msg:text", async (c) => {
 bot.chatType("private").callbackQuery("report", async (c) => {
   await c.api.sendMessage(
     reportGroupId,
-    `${c.from.id}, ${c.from.first_name} ${c.from.last_name} @${c.from.username}\n\n${c.msg?.reply_to_message?.text}\n\n${c.msg?.text}`
+    `${c.from.id}, ${c.from.first_name} ${c.from.last_name} @${c.from.username}\n\n${c.msg?.reply_to_message?.text}\n\n${c.msg?.text}`,
   );
   await c.editMessageReplyMarkup({
     reply_markup: new InlineKeyboard().text("Отправлено!"),
