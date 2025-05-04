@@ -23,26 +23,35 @@ bot.chatType("private").on("msg:text", async (c) => {
   }
 
   await c.replyWithChatAction("typing");
-  const result = await mistral.agents.complete({
-    stream: false,
-    agentId: Deno.env.get("MISTRAL_AGENT_ID")!,
-    messages: [
-      {
-        role: "user",
-        content: c.msg.text,
-      },
-    ],
-    maxTokens: 300,
-  });
-
-  if (result.choices) {
-    await c.reply(result.choices[0].message.content?.toString() || "Ошибка.", {
-      reply_markup: new InlineKeyboard().text("Сообщить об ошибке", "report"),
-      reply_parameters: {
-        message_id: c.msg.message_id,
-      },
+  try {
+    const result = await mistral.agents.complete({
+      stream: false,
+      agentId: Deno.env.get("MISTRAL_AGENT_ID")!,
+      messages: [
+        {
+          role: "user",
+          content: c.msg.text,
+        },
+      ],
+      maxTokens: 300,
     });
-  } else {
+    if (result.choices) {
+      await c.reply(
+        result.choices[0].message.content?.toString() || "Ошибка.",
+        {
+          reply_markup: new InlineKeyboard().text(
+            "Сообщить об ошибке",
+            "report",
+          ),
+          reply_parameters: {
+            message_id: c.msg.message_id,
+          },
+        },
+      );
+    } else {
+      await c.reply("Ошибка!");
+    }
+  } catch (e) {
     await c.reply("Ошибка!");
   }
 });
@@ -57,9 +66,3 @@ bot.chatType("private").callbackQuery("report", async (c) => {
   });
   await c.answerCallbackQuery();
 });
-
-bot
-  .chatType("private")
-  .callbackQuery(/.*/, async (c) => await c.answerCallbackQuery());
-
-bot.catch((e) => console.error(e.message));
